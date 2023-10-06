@@ -1,5 +1,13 @@
+using Raylib_cs;
+
 public class Tamagotchi
 {
+    private static List<Texture2D> idleAnimation = new List<Texture2D>()
+    {
+        Raylib.LoadTexture("character/idle1.png"),
+        Raylib.LoadTexture("character/idle2.png")
+    };
+
     private int hunger;
     private int boredom;
     private List<string> words = new();
@@ -50,6 +58,26 @@ public class Tamagotchi
     {
         // GetAlive() returnerar värdet som isAlive har.
         return isAlive;
+    }
+    public void Draw() {
+        System.Console.WriteLine(Animate());
+        Raylib.DrawTexture(
+            Animate(),
+            Raylib.GetScreenWidth()/2-idleAnimation[0].width/2,
+            150,
+            Color.WHITE
+        );
+    }
+    private float animationIndex = 0;
+    Texture2D Animate()
+    {
+        System.Console.WriteLine(animationIndex);
+        animationIndex+=.5f;
+        if ((int)animationIndex>idleAnimation.Count()-1)
+        {
+            animationIndex = 0;
+        }
+        return idleAnimation[(int)animationIndex];
     }
     private void ReduceBoredom()
     {
