@@ -7,11 +7,12 @@ public class Tamagotchi
         Raylib.LoadTexture("character/idle1.png"),
         Raylib.LoadTexture("character/idle2.png")
     };
+    private Texture2D dead = Raylib.LoadTexture("character/dead.png");
 
-    private int hunger;
-    private int boredom;
+    private float hunger;
+    private float boredom;
     private List<string> words = new();
-    private bool isAlive;
+    private bool isAlive = true;
     private Random generator = new();
     public string name;
 
@@ -22,26 +23,37 @@ public class Tamagotchi
     public void Feed()
     {
         // Feed() sänker Hunger
-        hunger--;
+        if (!isAlive) {return;}
+        hunger = Math.Clamp(hunger-1, 0, 10);
     }
-    public void Hi()
+    public string Hi()
     {
         // Hi() skriver ut ett slumpat ord från words, och anropar ReduceBoredom.
         ReduceBoredom();
+        string w;
         if (words.Count() > 0) {
-            System.Console.WriteLine(words[generator.Next(words.Count())]);
+            w = words[generator.Next(words.Count())];
         }
+        else
+        {
+            w = "Huuuhhh? I spek no words";
+        }
+        Console.WriteLine(w);
+        return (w);
     }
     public void Teach(string w)
     {
+        if (!isAlive) {return;}
         // Teach(string word) lägger till ett ord i words, och anropar ReduceBoredom.
         words.Add(w);
     }
     public void Tick()
     {
         // Tick() ökar hunger och boredom, och om någon av dem kommer över 10 så blir isAlive false.
-        hunger++;
-        boredom++;
+        if (isAlive) {
+            hunger += (float)generator.NextDouble()/20;
+            boredom += (float)generator.NextDouble()/10;
+        }
         if (hunger > 10 || boredom > 10)
         {
             isAlive = false;
@@ -60,19 +72,32 @@ public class Tamagotchi
         return isAlive;
     }
     public void Draw() {
-        System.Console.WriteLine(Animate());
-        Raylib.DrawTexture(
-            Animate(),
-            Raylib.GetScreenWidth()/2-idleAnimation[0].width/2,
-            150,
-            Color.WHITE
-        );
+        Raylib.DrawText($"Hunger: {Math.Round(hunger).ToString()}", 12, 12, 16, Color.BLACK);
+        Raylib.DrawText($"Boredom: {Math.Round(boredom).ToString()}", 12, 12+16, 16, Color.BLACK);
+        if (isAlive)
+        {
+            Raylib.DrawTexture(
+                Animate(),
+                Raylib.GetScreenWidth()/2-idleAnimation[0].width/2,
+                150,
+                Color.WHITE
+            );
+        }
+        else
+        {
+            Raylib.DrawText("DED", Raylib.GetScreenWidth()/3, 150, 48, Color.BLACK);
+            Raylib.DrawTexture(
+                dead,
+                Raylib.GetScreenWidth()/2-idleAnimation[0].width/2,
+                150,
+                Color.WHITE
+            );
+        }
     }
     private float animationIndex = 0;
     Texture2D Animate()
     {
-        System.Console.WriteLine(animationIndex);
-        animationIndex+=.5f;
+        animationIndex+=.1f;
         if ((int)animationIndex>idleAnimation.Count()-1)
         {
             animationIndex = 0;
@@ -82,6 +107,6 @@ public class Tamagotchi
     private void ReduceBoredom()
     {
         // ReduceBoredom() sänker boredom.
-        boredom--;
+        boredom = Math.Clamp(boredom-1, 0, 10);
     }
 }

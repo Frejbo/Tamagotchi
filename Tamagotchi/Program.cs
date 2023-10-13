@@ -2,30 +2,30 @@
 using System.Numerics;
 
 Raylib.InitWindow(500, 500, "Tamagotchi");
-Raylib.SetTargetFPS(5);
+Raylib.SetTargetFPS(30);
 
 Tamagotchi ta = new("Erik. A");
-ta.Teach("no.");
 
 while (!Raylib.WindowShouldClose())
 {
     GetInput();
 
     ta.Tick();
-    ta.Feed();
-    ta.Hi();
     Draw();
 }
 
 void GetInput() {
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_KP_1)) {
+    if (Raylib.IsKeyPressed(KeyboardKey.KEY_ONE)) {
         ta.Hi();
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_KP_2)) {
+    if (Raylib.IsKeyPressed(KeyboardKey.KEY_TWO)) {
         ta.Feed();
     }
-    if (Raylib.IsKeyDown(KeyboardKey.KEY_KP_3)) {
+    if (Raylib.IsKeyPressed(KeyboardKey.KEY_THREE)) {
         ta.Teach("word");
+    }
+    if (Raylib.IsKeyPressed(KeyboardKey.KEY_R)) {
+        ta = new Tamagotchi("Erik. A2");
     }
 }
 
@@ -44,9 +44,9 @@ void Draw()
 
     Raylib.DrawText("1. Say hi", 50, menuBeginY + (int)bg.height/5, 24, Color.BLACK);
     Raylib.DrawText("2. Feed", 50, menuBeginY + (int)(bg.height/1.75f), 24, Color.BLACK);
-    Raylib.DrawText("3. Teach", 300, menuBeginY + (int)bg.height/5, 24, Color.BLACK);
+    Raylib.DrawText("3. Teach word", 300, menuBeginY + (int)bg.height/5, 24, Color.BLACK);
 
-    Raylib.DrawText("Tamagotchi", 20, 50, 24, Color.BLACK);
+    Raylib.DrawText("Tamagotchi", 200, 10, 24, Color.BLACK);
 
     Raylib.EndDrawing();
 }
